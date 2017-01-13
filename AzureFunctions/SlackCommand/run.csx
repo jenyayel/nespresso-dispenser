@@ -13,14 +13,14 @@ private const string deviceId = "nespresso-alpha";
 public static async Task<object> Run(HttpRequestMessage req, TraceWriter log)
 {
     var data = await req.Content.ReadAsFormDataAsync();
-    log.Info($"Triggered WebHook with text data {data["text"]}");
+    log.Info($"Triggered WebHook with text data '{data["text"]}' by 'data["user_name"]'");
 
     if (!_validCommands.Contains(data["text"]))
         return req.CreateResponse(HttpStatusCode.OK, $"{data["user_name"]}, the only valid commands are '{String.Join(", ", _validCommands)}'.");
 
     await send(data["text"]);
 
-    return req.CreateResponse(HttpStatusCode.OK, $"{data["user_name"]}, I'll open capsula number {data["text"]}");
+    return req.CreateResponse(HttpStatusCode.OK, $"I'm opening capsule '{data["text"]}'");
 }
 
 private async static Task send(string message)
