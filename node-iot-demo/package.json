@@ -1,0 +1,13 @@
+{
+  "name": "node-iot",
+  "version": "1.0.0",
+  "description": "",
+  "author": "Jenya Y.",
+  "license": "MIT",
+  "dependencies": {
+    "azure-event-hubs": "0.0.4",
+    "azure-iot-device": "^1.1.2",
+    "azure-iot-device-mqtt": "^1.1.2",
+    "azure-iothub": "^1.1.2"
+  }
+}
