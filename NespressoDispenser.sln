@@ -7,6 +7,7 @@ Project("{33AD0EE8-D99B-4E14-8CD9-3F56ABEF97A2}") = "AzureFunctions", "AzureFunc
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SolutionItems", "SolutionItems", "{F30DB9DB-D39D-4ADA-946D-379BC897EB2B}"
 	ProjectSection(SolutionItems) = preProject
+		.deployment = .deployment
 		.gitignore = .gitignore
 		LICENSE = LICENSE
 		README.md = README.md
