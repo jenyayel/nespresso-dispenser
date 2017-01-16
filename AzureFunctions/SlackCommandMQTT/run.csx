@@ -8,7 +8,7 @@ using uPLibrary.Networking.M2Mqtt;
 using uPLibrary.Networking.M2Mqtt.Messages;
 
 private static readonly string[] _validCommands = new string[] { "1", "2", "3", "4", "5" };
-private MqttClient _client = new MqttClient(ConfigurationManager.AppSettings["mqtt_host"], 16742, false, null, null, MqttSslProtocols.None);
+private static MqttClient _client = new MqttClient(ConfigurationManager.AppSettings["mqtt_host"], 16742, false, null, null, MqttSslProtocols.None);
 
 public static async Task<object> Run(HttpRequestMessage req, TraceWriter log)
 {
