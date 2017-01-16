@@ -17,7 +17,7 @@ public static async Task<object> Run(HttpRequestMessage req, TraceWriter log)
 
     if (!_validCommands.Contains(data["text"]))
         return req.CreateResponse(HttpStatusCode.OK, $"{data["user_name"]}, the only valid commands are '{String.Join(", ", _validCommands)}'.");
-    ,
+    
     if(!client.IsConnected)
     {
         var clientId = Guid.NewGuid().ToString();
