@@ -18,18 +18,18 @@ public static async Task<object> Run(HttpRequestMessage req, TraceWriter log)
     if (!_validCommands.Contains(data["text"]))
         return req.CreateResponse(HttpStatusCode.OK, $"{data["user_name"]}, the only valid commands are '{String.Join(", ", _validCommands)}'.");
     
-    if(!client.IsConnected)
+    if(!_client.IsConnected)
     {
         var clientId = Guid.NewGuid().ToString();
         log.Info($"Client {clientId} connecting");
-        var connectResponse = client.Connect(
+        var connectResponse = _client.Connect(
             Guid.NewGuid().ToString(), 
             ConfigurationManager.AppSettings["mqtt_user"], 
             ConfigurationManager.AppSettings["mqtt_password"]);
         log.Info($"Client {clientId} connection result {connectResponse}");
     }
 
-    var messageId = client.Publish(
+    var messageId = _client.Publish(
         ConfigurationManager.AppSettings["mqqt_topic"],
         Encoding.ASCII.GetBytes(data["text"]),
         MqttMsgBase.QOS_LEVEL_EXACTLY_ONCE,
