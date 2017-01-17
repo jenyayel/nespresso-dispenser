@@ -46,8 +46,6 @@ public static async Task<object> Run(HttpRequestMessage req, TraceWriter log)
         false);
 
     log.Info($"Published message {messageId}");
-
-    client.Disconnect();
-
+    
     return req.CreateResponse(HttpStatusCode.OK, $"I'm opening capsule '{data["text"]}'");
 }
