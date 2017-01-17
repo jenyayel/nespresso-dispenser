@@ -13,7 +13,7 @@ private static MqttClient _client = new MqttClient(ConfigurationManager.AppSetti
 public static async Task<object> Run(HttpRequestMessage req, TraceWriter log)
 {
     if (req.Method == HttpMethod.Get)
-        return; // test/ping  requests
+        return req.CreateResponse(HttpStatusCode.OK); // test/ping  requests
 
     var data = await req.Content.ReadAsFormDataAsync();
     log.Info($"Triggered WebHook with text data '{data["text"]}' by '{data["user_name"]}'");
