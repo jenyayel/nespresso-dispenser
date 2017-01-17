@@ -12,19 +12,30 @@ private static MqttClient _client = new MqttClient(ConfigurationManager.AppSetti
 
 public static async Task<object> Run(HttpRequestMessage req, TraceWriter log)
 {
+    if (req.Method == HttpMethod.Get)
+        return; // test/ping  requests
+
     var data = await req.Content.ReadAsFormDataAsync();
     log.Info($"Triggered WebHook with text data '{data["text"]}' by '{data["user_name"]}'");
 
+    if (ConfigurationManager.AppSettings["command_token"] != data["token"])
+    {
+        log.Info($"Not valid token {data["token"]}");
+        return req.CreateResponse(HttpStatusCode.Unauthorized, $"Not valid token");
+    }
+
     if (!_validCommands.Contains(data["text"]))
+    { 
         return req.CreateResponse(HttpStatusCode.OK, $"{data["user_name"]}, the only valid commands are '{String.Join(", ", _validCommands)}'.");
-    
-    if(!_client.IsConnected)
+    }
+
+    if (!_client.IsConnected)
     {
         var clientId = Guid.NewGuid().ToString();
         log.Info($"Client {clientId} connecting");
         var connectResponse = _client.Connect(
-            Guid.NewGuid().ToString(), 
-            ConfigurationManager.AppSettings["mqtt_user"], 
+            Guid.NewGuid().ToString(),
+            ConfigurationManager.AppSettings["mqtt_user"],
             ConfigurationManager.AppSettings["mqtt_password"]);
         log.Info($"Client {clientId} connection result {connectResponse}");
     }
