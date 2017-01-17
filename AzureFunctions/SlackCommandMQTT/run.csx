@@ -50,9 +50,5 @@ public static async Task<object> Run(HttpRequestMessage req, TraceWriter log)
 }
 private static void messagePublished(object sender, MqttMsgPublishedEventArgs e)
 {
-    if (e.IsPublished)
-        log.Info($"Published message {e.MessageId}");
-    else
-        log.Info($"Message was not published {e.MessageId}");
     ((MqttClient)sender).Disconnect();
 }
