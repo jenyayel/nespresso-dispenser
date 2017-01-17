@@ -24,10 +24,10 @@ public static async Task<object> Run(HttpRequestMessage req, TraceWriter log)
     }
 
     if (!_validCommands.Contains(data["text"]))
-    { 
+    {
         return req.CreateResponse(HttpStatusCode.OK, $"{data["user_name"]}, the only valid commands are '{String.Join(", ", _validCommands)}'.");
     }
-    
+
     var client = new MqttClient(ConfigurationManager.AppSettings["mqtt_host"], 16742, false, null, null, MqttSslProtocols.None);
     var clientId = Guid.NewGuid().ToString();
 
@@ -36,6 +36,7 @@ public static async Task<object> Run(HttpRequestMessage req, TraceWriter log)
         Guid.NewGuid().ToString(),
         ConfigurationManager.AppSettings["mqtt_user"],
         ConfigurationManager.AppSettings["mqtt_password"]);
+    client.MqttMsgPublished += messagePublished;
 
     log.Info($"Client {clientId} connection result {connectResponse}");
 
@@ -45,7 +46,13 @@ public static async Task<object> Run(HttpRequestMessage req, TraceWriter log)
         MqttMsgBase.QOS_LEVEL_EXACTLY_ONCE,
         false);
 
-    log.Info($"Published message {messageId}");
-    
     return req.CreateResponse(HttpStatusCode.OK, $"I'm opening capsule '{data["text"]}'");
+}
+private static void messagePublished(object sender, MqttMsgPublishedEventArgs e)
+{
+    if (e.IsPublished)
+        log.Info($"Published message {e.MessageId}");
+    else
+        log.Info($"Message was not published {e.MessageId}");
+    ((MqttClient)sender).Disconnect();
 }
