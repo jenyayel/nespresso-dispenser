@@ -48,6 +48,8 @@ private static object validateAndGetErrorResponse(HttpRequestMessage req, TraceW
         log.Info($"Not valid command {command}");
         return req.CreateResponse(HttpStatusCode.OK, $"Not a valid command, you can only say '{String.Join(", ", _validCommands)}'.");
     }
+
+    return null;
 }
 
 private static void sendMessage(TraceWriter log, string message)
