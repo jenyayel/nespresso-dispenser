@@ -26,7 +26,9 @@ public static async Task<object> Run(HttpRequestMessage req, TraceWriter log)
 
     sendMessage(log, data["text"]);
 
-    return req.CreateResponse(HttpStatusCode.OK, $"I will pass forward '{data["text"]}'");
+    return req.CreateResponse(HttpStatusCode.OK, new {
+        text = $"I will pass forward '{data["text"]}'"
+    });
 }
 
 private static object validateAndGetErrorResponse(HttpRequestMessage req, TraceWriter log, string token, string command, string user)
