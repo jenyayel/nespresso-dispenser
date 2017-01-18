@@ -1,7 +1,9 @@
 #Nespresso Dispenser server parts
 
-Azure function that serves as a WebHook for [Slash Commands](https://api.slack.com/slash-commands) and publishes 
-cloud-to-device messages. The connection string `iot-hub` must be defined to [IoT Hub](https://azure.microsoft.com/en-us/services/iot-hub/).
+[Azure Functions](https://azure.microsoft.com/en-us/services/functions/) that serves as a WebHook for [Slash Commands](https://api.slack.com/slash-commands) and publishes 
+cloud-to-device messages.
+
+There are currently two separate implementations of the same thing - first publishs to [Azure IoT Hub](https://azure.microsoft.com/en-us/services/iot-hub/) and second to generic MQTT topic.
 
 ### Misc
 
