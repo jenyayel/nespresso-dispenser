@@ -3,7 +3,7 @@
 [Azure Functions](https://azure.microsoft.com/en-us/services/functions/) that serves as a WebHook for [Slash Commands](https://api.slack.com/slash-commands) and publishes 
 cloud-to-device messages.
 
-There are currently two separate implementations of the same thing - first publishs to [Azure IoT Hub](https://azure.microsoft.com/en-us/services/iot-hub/) and second to generic MQTT topic.
+There are currently two separate implementations of the same thing - first publishes to [Azure IoT Hub](https://azure.microsoft.com/en-us/services/iot-hub/) and the second to generic MQTT topic.
 
 ### Misc
 
