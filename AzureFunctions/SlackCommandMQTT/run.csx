@@ -26,9 +26,7 @@ public static async Task<object> Run(HttpRequestMessage req, TraceWriter log)
 
     sendMessage(log, data["text"]);
 
-    return req.CreateResponse(HttpStatusCode.OK, new {
-        text = $"I will pass forward '{data["text"]}'"
-    });
+    return getResponse(req, $"I will pass forward '{data["text"]}'");
 }
 
 private static object validateAndGetErrorResponse(HttpRequestMessage req, TraceWriter log, string token, string command, string user)
@@ -42,13 +40,13 @@ private static object validateAndGetErrorResponse(HttpRequestMessage req, TraceW
     if (!_validUsers.Contains(user?.ToLowerInvariant()))
     {
         log.Info($"Not valid user {user}");
-        return req.CreateResponse(HttpStatusCode.OK, $"Too bad {user}, you are not part of the *club* :(");
+        return getResponse(req, $"Too bad {user}, you are not part of the *club* :(", false);
     }
 
     if (!_validCommands.Contains(command?.ToLowerInvariant()))
     {
         log.Info($"Not valid command {command}");
-        return req.CreateResponse(HttpStatusCode.OK, $"Not a valid command, you can only say '{String.Join(", ", _validCommands)}'.");
+        return getResponse(req, $"Not a valid command, you can only say '{String.Join(", ", _validCommands)}'.", false);
     }
 
     return null;
@@ -78,4 +76,14 @@ private static void sendMessage(TraceWriter log, string message)
 private static void messagePublished(object sender, MqttMsgPublishedEventArgs e)
 {
     ((MqttClient)sender).Disconnect();
+}
+
+private static object getResponse(HttpRequestMessage req, string message, bool? isGood = null)
+{
+    return req.CreateResponse(HttpStatusCode.OK, new
+    {
+        text = message,
+        mrkdwn = true,
+        color = isGood.HasValue ? (isGood.Value ? "good" : "danger") : null
+    });
 }
