@@ -1,0 +1,19 @@
+﻿{
+  "bindings": [
+    {
+      "type": "httpTrigger",
+      "direction": "in",
+      "name": "req",
+      "authLevel": "function"
+    },
+    {
+      "type": "serviceBus",
+      "name": "outputQueue",
+      "queueName": "nespresso-requests",
+      "connection": "dm-common-servicebus",
+      "accessRights_": "Send",
+      "direction": "out"
+    }
+  ],
+  "disabled": false
+}

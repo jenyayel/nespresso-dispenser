@@ -5,15 +5,14 @@ using System.Net.Http.Headers;
 using System.Text;
 using System.Configuration;
 using System.Threading;
-using uPLibrary.Networking.M2Mqtt;
-using uPLibrary.Networking.M2Mqtt.Messages;
 using CM = System.Configuration.ConfigurationManager;
 
 private static readonly HashSet<string> _validCommands = new HashSet<string>(CM.AppSettings["valid_commands"].Split(',').Select(s => s.Trim().ToLower()));
 private static readonly HashSet<string> _validUsers = new HashSet<string>(CM.AppSettings["valid_users"].Split(',').Select(s => s.Trim().ToLower()));
 
-public static async Task<object> Run(HttpRequestMessage req, TraceWriter log)
+public static async Task<object> Run(HttpRequestMessage req, TraceWriter log, out string outputMessage)
 {
+    outputMessage = null;
     if (req.Method == HttpMethod.Get)
         return req.CreateResponse(HttpStatusCode.OK); // test/ping  requests
 
@@ -24,8 +23,7 @@ public static async Task<object> Run(HttpRequestMessage req, TraceWriter log)
     if (errorResponse != null)
         return errorResponse;
 
-    sendMessage(log, data["text"]);
-
+    outputMessage = data["text"];
     return getResponse(req, $"I will pass forward '{data["text"]}'");
 }
 
@@ -50,32 +48,6 @@ private static object validateAndGetErrorResponse(HttpRequestMessage req, TraceW
     }
 
     return null;
-}
-
-private static void sendMessage(TraceWriter log, string message)
-{
-    var client = new MqttClient(CM.AppSettings["mqtt_host"], 16742, false, null, null, MqttSslProtocols.None);
-    var clientId = Guid.NewGuid().ToString();
-
-    log.Info($"Client {clientId} connecting");
-    var connectResponse = client.Connect(
-        Guid.NewGuid().ToString(),
-        CM.AppSettings["mqtt_user"],
-        CM.AppSettings["mqtt_password"]);
-    client.MqttMsgPublished += messagePublished;
-
-    log.Info($"Client {clientId} connection result {connectResponse}");
-
-    var messageId = client.Publish(
-        CM.AppSettings["mqqt_topic"],
-        Encoding.ASCII.GetBytes(message.ToLowerInvariant()),
-        MqttMsgBase.QOS_LEVEL_EXACTLY_ONCE,
-        false);
-}
-
-private static void messagePublished(object sender, MqttMsgPublishedEventArgs e)
-{
-    ((MqttClient)sender).Disconnect();
 }
 
 private static object getResponse(HttpRequestMessage req, string message, bool? isGood = null)
