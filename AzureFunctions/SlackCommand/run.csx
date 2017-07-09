@@ -10,13 +10,13 @@ using CM = System.Configuration.ConfigurationManager;
 private static readonly HashSet<string> _validCommands = new HashSet<string>(CM.AppSettings["valid_commands"].Split(',').Select(s => s.Trim().ToLower()));
 private static readonly HashSet<string> _validUsers = new HashSet<string>(CM.AppSettings["valid_users"].Split(',').Select(s => s.Trim().ToLower()));
 
-public static async Task<object> Run(HttpRequestMessage req, TraceWriter log, out string outputMessage)
+public static HttpResponseMessage Run(HttpRequestMessage req, TraceWriter log, out string outputMessage)
 {
     outputMessage = null;
     if (req.Method == HttpMethod.Get)
         return req.CreateResponse(HttpStatusCode.OK); // test/ping  requests
 
-    var data = await req.Content.ReadAsFormDataAsync();
+    var data = req.Content.ReadAsFormDataAsync().Result;
     log.Info($"Triggered WebHook with text data '{data["text"]}' by '{data["user_name"]}'");
 
     var errorResponse = validateAndGetErrorResponse(req, log, data["token"], data["text"], data["user_name"]);
@@ -27,7 +27,7 @@ public static async Task<object> Run(HttpRequestMessage req, TraceWriter log, ou
     return getResponse(req, $"I will pass forward '{data["text"]}'");
 }
 
-private static object validateAndGetErrorResponse(HttpRequestMessage req, TraceWriter log, string token, string command, string user)
+private static HttpResponseMessage validateAndGetErrorResponse(HttpRequestMessage req, TraceWriter log, string token, string command, string user)
 {
     if (CM.AppSettings["command_token"] != token)
     {
@@ -50,7 +50,7 @@ private static object validateAndGetErrorResponse(HttpRequestMessage req, TraceW
     return null;
 }
 
-private static object getResponse(HttpRequestMessage req, string message, bool? isGood = null)
+private static HttpResponseMessage getResponse(HttpRequestMessage req, string message, bool? isGood = null)
 {
     return req.CreateResponse(HttpStatusCode.OK, new
     {

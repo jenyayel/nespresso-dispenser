@@ -8,10 +8,15 @@
     },
     {
       "type": "serviceBus",
-      "name": "outputQueue",
+      "name": "outputMessage",
       "queueName": "nespresso-requests",
       "connection": "dm-common-servicebus",
       "accessRights_": "Send",
+      "direction": "out"
+    },
+    {
+      "type": "http",
+      "name": "$return",
       "direction": "out"
     }
   ],
